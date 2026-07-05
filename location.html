@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Location Auditor</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #0b0f19; color: #ffffff; text-align: center; padding: 40px; }
+        .card { background: #161b26; border: 2px solid #38bdf8; padding: 30px; display: inline-block; border-radius: 12px; box-shadow: 0 4px 20px rgba(56, 189, 248, 0.2); max-width: 90%; }
+        h1 { color: #38bdf8; font-size: 22px; margin-bottom: 10px; }
+        p { color: #94a3b8; font-size: 15px; }
+        .btn { background-color: #38bdf8; color: #0b0f19; border: none; padding: 12px 24px; font-weight: bold; font-size: 16px; cursor: pointer; border-radius: 6px; margin-top: 15px; width: 100%; transition: 0.3s; }
+        .btn:hover { background-color: #0ea5e9; }
+        .result-box { margin-top: 20px; text-align: left; background: #20293a; padding: 15px; border-radius: 6px; display: none; border-left: 4px solid #34d399; }
+        .data-line { margin: 8px 0; font-family: monospace; font-size: 14px; }
+        .highlight { color: #34d399; font-weight: bold; }
+        a { color: #38bdf8; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>🛰️ GPS Location Auditor (Legal)</h1>
+        <p>Yeh tool browser ke official Geolocation API ko use kar ke device ke exact GPS coordinates nikalta hai.</p>
+        
+        <button class="btn" onclick="getLocation()">Request GPS Access</button>
+
+        <div id="result" class="result-box">
+            <div class="data-line">📍 <strong>Latitude:</strong> <span id="lat" class="highlight">-</span></div>
+            <div class="data-line">📍 <strong>Longitude:</strong> <span id="lon" class="highlight">-</span></div>
+            <div class="data-line">🎯 <strong>Accuracy:</strong> <span id="acc" class="highlight">-</span> meters ke andar</div>
+            <div class="data-line">🗺️ <strong>Live Map:</strong> <span id="map-link"></span></div>
+        </div>
+    </div>
+
+    <script>
+        function getLocation() {
+            const resultBox = document.getElementById('result');
+            
+            // Check karna ke kya browser location support karta hai
+            if (navigator.geolocation) {
+                // High accuracy settings ke saath location request karna
+                navigator.geolocation.getCurrentPosition(showPosition, showError, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                });
+            } else {
+                alert("Aap ka browser GPS location support nahi karta.");
+            }
+        }
+
+        function showPosition(position) {
+            // Data ko HTML mein set karna
+            document.getElementById('lat').innerText = position.coords.latitude;
+            document.getElementById('lon').innerText = position.coords.longitude;
+            document.getElementById('acc').innerText = position.coords.accuracy.toFixed(1);
+            
+            // Google Maps ka link banana coordinates ko use karte hue
+            const mapUrl = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
+            document.getElementById('map-link').innerHTML = `<a href="${mapUrl}" target="_blank">Google Maps par dekhein ↗️</a>`;
+            
+            // Result box ko screen par show karna
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User ne permission DENY (reject) kar di. Access nahi mila.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Device ki location maloom nahi ho saki.");
+                    break;
+                case error.TIMEOUT:
+                    alert("Request timeout ho gayi.");
+                    break;
+                default:
+                    alert("Koi anjaan error aaya hai.");
+            }
+        }
+    </script>
+
+</body>
+          </html>
+  
